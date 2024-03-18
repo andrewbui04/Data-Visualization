@@ -66,9 +66,6 @@ function init() {
                     .data(geojson.features)
                     .enter()
                     .append("path")
-                    .transition() // Add transition
-                    .duration(2000) // Set duration to 2000 milliseconds (2 seconds)
-                    .ease(d3.easeCubicOut) // Use cubic out easing
                     .attr("d", path)
                     .style("fill", function(d) { // Set the fill color of the path
                         if (d.properties.name === 'Ukraine') {
