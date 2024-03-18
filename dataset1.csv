@@ -1,32 +1,32 @@
-time,coa_name,refugees
-22-Dec,Belgium,63210
-22-Dec,Bulgaria,147385
-22-Dec,Czechia,432415
-22-Dec,Denmark,32155
-22-Dec,Germany,967715
-22-Dec,Estonia,38385
-22-Dec,Ireland,69370
-22-Dec,Greece,21530
-22-Dec,Spain,160995
-22-Dec,France,68430
-22-Dec,Croatia,18970
-22-Dec,Italy,145800
-22-Dec,Cyprus,12610
-22-Dec,Latvia,35865
-22-Dec,Lithuania,65425
-22-Dec,Luxembourg,4655
-22-Dec,Hungary,28905
-22-Dec,Malta,1515
-22-Dec,Netherlands,109640
-22-Dec,Austria,87570
-22-Dec,Poland,961340
-22-Dec,Portugal,55920
-22-Dec,Romania,100955
-22-Dec,Slovenia,7675
-22-Dec,Slovakia,95550
-22-Dec,Finland,45215
-22-Dec,Sweden,46295
-22-Dec,Iceland,2315
-22-Dec,Liechtenstein,385
-22-Dec,Norway,33540
-22-Dec,Switzerland,62800
+time,coa_name,refugees,regions
+22-Dec,Belgium,63210,Western Europe
+22-Dec,Bulgaria,147385,Eastern Europe
+22-Dec,Czechia,432415,Eastern Europe
+22-Dec,Denmark,32155,Northern Europe
+22-Dec,Germany,967715,Western Europe
+22-Dec,Estonia,38385,Eastern Europe
+22-Dec,Ireland,69370,Western Europe
+22-Dec,Greece,21530,Southern Europe
+22-Dec,Spain,160995,Southern Europe
+22-Dec,France,68430,Western Europe
+22-Dec,Croatia,18970,Eastern Europe
+22-Dec,Italy,145800,Southern Europe
+22-Dec,Cyprus,12610,Southern Europe
+22-Dec,Latvia,35865,Eastern Europe
+22-Dec,Lithuania,65425,Eastern Europe
+22-Dec,Luxembourg,4655,Western Europe
+22-Dec,Hungary,28905,Eastern Europe
+22-Dec,Malta,1515,Southern Europe
+22-Dec,Netherlands,109640,Western Europe
+22-Dec,Austria,87570,Western Europe
+22-Dec,Poland,961340,Eastern Europe
+22-Dec,Portugal,55920,Southern Europe
+22-Dec,Romania,100955,Eastern Europe
+22-Dec,Slovenia,7675,Eastern Europe
+22-Dec,Slovakia,95550,Eastern Europe
+22-Dec,Finland,45215,Northern Europe
+22-Dec,Sweden,46295,Northern Europe
+22-Dec,Iceland,2315,Northern Europe
+22-Dec,Liechtenstein,385,Western Europe
+22-Dec,Norway,33540,Northern Europe
+22-Dec,Switzerland,62800,Western Europe
