@@ -1,14 +1,14 @@
 function init() {
     // Define the width and height of the SVG canvas
     var w = window.innerWidth;
-    var h = window.innerHeight;
+    var h = 750;
 
     // Create a new geographical projection using the Mercator projection
     // This will be used to convert GeoJSON coordinates into SVG coordinates
     var projection = d3.geoMercator()
                         .center([ 13, 52 ])
-                        .scale([ 560 ])
-                        .translate([ w / 2, h / 2 ]);
+                        .scale([ 620 ])
+                        .translate([ w / 2, h / 1.6]);
 
     // Create a new geographic path generator
     // This will be used to convert GeoJSON objects into SVG path data
@@ -19,46 +19,60 @@ function init() {
 
     // set color scale
     var color = d3.scaleThreshold()
-                    .domain([1000,10000,100000,500000,1000000,1500000])
-                    .range(["#ffc9bb", "#ffa590", "#ff8164", "#ff4122", "#ed3419", "#c61a09"]);
-
-    
+                    .domain([1000,10000,100000,500000,1000000,5000000])
+                    .range(["#ffc9bb", "#ffa590", "#ff8164", "#ff4122", "#ed3419", "#c61a09", "#a50000"]);
                 
     // Select the chart div and append an SVG canvas to it
     var svg = d3.select("#chart")
                 .append("svg")
                 .attr("width", w) // Set the width of the SVG canvas
-                .attr("height", h * 0.85 ) // Set the height of the SVG canvas
+                .attr("height", h) // Set the height of the SVG canvas
                 .attr("fill", "grey"); // Set the fill color of the SVG canvas
 
-    // Define the chosen_dataset variable outside of the updateMap function
-    var chosen_dataset = "dataset1.csv";
+    // Create a date parser and formatter
+    const parseTime = d3.timeParse("%Y-%m");
+    const formatTime = d3.timeFormat("%Y-%m");
 
-    // Move the updateMap function outside of the init function
-    window.updateMap = function(sliderValue) {
-        // Update the chosen_dataset based on the slider value
-        chosen_dataset = sliderValue === "0" ? "dataset1.csv" : "dataset2.csv";
+    function updateMap(selectedStartDate, selectedEndDate) {
         // Remove the previous choropleth map
-        d3.select("#chart").selectAll("path").remove();
-        
-        d3.csv(chosen_dataset).then(function(data) {
+        d3.select("#chart").selectAll(".country").remove();
 
+        d3.csv("map.csv").then(function(data) {
             // Request the GeoJSON
             d3.json(geoJsonUrl).then(function(geojson) {
 
+                // Create a date range from selectedStartDate to selectedEndDate
+                var startDate = parseTime(selectedStartDate);
+                var endDate = parseTime(selectedEndDate);
+                var dateRange = d3.timeMonths(startDate, d3.timeMonth.offset(endDate, 1)); // The end date is exclusive, so add 1 month to include it
+                
                 for (var i = 0; i < data.length; i++) {
-                    var dataCountry = data[i].coa_name; // Get the country name
-                    var dataValue = parseFloat(data[i].refugees); // Get the value
-                    // For each feature in the GeoJSON data
-                    for (var j = 0; j < geojson.features.length; j++) {
-                        var jsonCountry = geojson.features[j].properties.name; // Get the country name
-                        // If the country names match
-                        if (dataCountry == jsonCountry) {
-                            // Set the value of the GeoJSON feature
-                            geojson.features[j].properties.refugees = dataValue;
-                            break;
+                    var dataCountry = data[i]['country']; // Get the country name
+
+                    // Initialize the sum of the values
+                    var sum = 0;
+
+                    // Iterate over the date range and sum the values for each date
+                    dateRange.forEach(function(date) {
+                        var dateString = formatTime(date);
+                        console.log(dateString);
+                        var dataValue = parseFloat(data[i][dateString]);
+                        if (!isNaN(dataValue)) {
+                            sum += dataValue;
                         }
-                    }
+                    
+
+                        // For each feature in the GeoJSON data
+                        for (var j = 0; j < geojson.features.length; j++) {
+                            var jsonCountry = geojson.features[j].properties.name; // Get the country name
+                            // If the country names match
+                            if (dataCountry == jsonCountry) {
+                                // Set the value of the GeoJSON feature
+                                geojson.features[j].properties.refugees = sum;
+                                break;
+                            }
+                        }
+                    });
                 }
 
                 // Tell D3 to render a path for each GeoJSON feature
@@ -67,6 +81,7 @@ function init() {
                     .enter()
                     .append("path")
                     .attr("d", path)
+                    .attr("class", "country")
                     .style("fill", function(d) { // Set the fill color of the path
                         if (d.properties.name === 'Ukraine') {
                             // Create a linear gradient for Ukraine
@@ -115,16 +130,53 @@ function init() {
             });
         });
     }
-                
-    updateMap("0");
+        
+    d3.csv("map.csv").then(function(data) {
 
+        // Get the first row of the data
+        var firstRow = data[0];
+
+        // Get the keys of the first row
+        var keys = Object.keys(firstRow);
+
+        // Convert the dates from strings to Date objects
+        var dates = keys.slice(1).map(parseTime); // Skip only the first key
+
+        // Create a slider
+        var slider = d3.sliderBottom()
+            .min(d3.min(dates))
+            .max(d3.max(dates))
+            .width(window.innerWidth * 0.95) // Set the width to window.innerWidth
+            .tickFormat(d3.timeFormat('%Y-%m'))
+            .ticks(dates.length) // The number of ticks
+            .step(null) // This makes the slider a range slider
+            .default([parseTime('2022-03'), parseTime('2022-07')]) // Default range
+            .fill('#FFDD00') // Fill color for the selected range
+            .on('onchange', function(value) {
+                // Format the selected dates to match the format in the data
+                var selectedStartDate = d3.timeFormat('%Y-%m')(value[0]);
+                var selectedEndDate = d3.timeFormat('%Y-%m')(value[1]);
+                // Update the map with the new date range
+                updateMap(selectedStartDate, selectedEndDate);
+            });
+
+        var gStep = d3.select('#chart')
+            .append('svg')
+            .attr('width', '100%') // Adjust the width of the SVG as well
+            .attr('height', 100)
+            .append('g')
+            .attr('transform', 'translate(30,30)');
+
+        gStep.call(slider);
+    });
+
+    // Call updateMap with '2022-03' to '2022-07' for initial display
+    updateMap("2022-03", "2022-07");
 
     // set legend
-    
     svg.append("g")
         .attr("class", "legendThreshold")
-        .attr("transform", "translate(0, " + h / 1.45 + ")");
-    
+        .attr("transform", "translate(24, " + h / 1.45 + ")");
 
     var legend = d3.legendColor()
                     .labelFormat(d3.format(",.0f"))
@@ -135,32 +187,8 @@ function init() {
 
     svg.select(".legendThreshold")
         .call(legend);
-    }
 
-    // Create a container for the slider and labels
-    var sliderContainer = d3.select("body").append("div")
-                            .attr("id", "sliderContainer");
-
-    // Add the label for the start of the slider
-    sliderContainer.append("div")
-        .attr("class", "sliderLabel")
-        .text("Dec 2022");
-
-    // Add the slider
-    sliderContainer.append("input")
-        .attr("type", "range")
-        .attr("min", "0")
-        .attr("max", "1")
-        .attr("value", "0")
-        .attr("id", "yearSlider")
-        .on("input", function() {
-            updateMap(this.value);
-        });
-
-    // Add the label for the end of the slider
-    sliderContainer.append("div")
-        .attr("class", "sliderLabel")
-        .text("Dec 2023");
+}
 
 // Set the `init` function to be called when the window is loaded
 window.onload = init;
