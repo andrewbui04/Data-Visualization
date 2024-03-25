@@ -20,7 +20,7 @@ function init() {
     // set color scale
     var color = d3.scaleThreshold()
                     .domain([1000,10000,100000,500000,1000000,5000000])
-                    .range(["#ffc9bb", "#ffa590", "#ff8164", "#ff4122", "#ed3419", "#c61a09", "#a50000"]);
+                    .range(["#ffc9bb", "#ffa590", "#ff8164", "#ff4122", "#ed3419", "#c61a09"]);
                 
     // Select the chart div and append an SVG canvas to it
     var svg = d3.select("#chart")
@@ -33,102 +33,113 @@ function init() {
     const parseTime = d3.timeParse("%Y-%m");
     const formatTime = d3.timeFormat("%Y-%m");
 
-    function updateMap(selectedStartDate, selectedEndDate) {
+    // Load the data outside of the updateMap function
+    var geojsonData, csvData;
+
+    d3.json(geoJsonUrl).then(function(geojson) {
+        geojsonData = geojson;
+        d3.csv("map.csv").then(function(data) {
+            csvData = data;
+            // Call updateMap with '2022-03' to '2022-07' for initial display
+            updateMap("2022-03", "2022-07", csvData, geojsonData);
+        });
+    });
+
+    function updateMap(selectedStartDate, selectedEndDate, data, geojson) {
         // Remove the previous choropleth map
         d3.select("#chart").selectAll(".country").remove();
 
-        d3.csv("map.csv").then(function(data) {
-            // Request the GeoJSON
-            d3.json(geoJsonUrl).then(function(geojson) {
+        // Create a date range from selectedStartDate to selectedEndDate
+        var startDate = parseTime(selectedStartDate);
+        var endDate = parseTime(selectedEndDate);
+        var dateRange = d3.timeMonths(startDate, d3.timeMonth.offset(endDate, 1)); // The end date is exclusive, so add 1 month to include it
+        
+        for (var i = 0; i < data.length; i++) {
+            var dataCountry = data[i]['country']; // Get the country name
 
-                // Create a date range from selectedStartDate to selectedEndDate
-                var startDate = parseTime(selectedStartDate);
-                var endDate = parseTime(selectedEndDate);
-                var dateRange = d3.timeMonths(startDate, d3.timeMonth.offset(endDate, 1)); // The end date is exclusive, so add 1 month to include it
-                
-                for (var i = 0; i < data.length; i++) {
-                    var dataCountry = data[i]['country']; // Get the country name
+            // Initialize the sum of the values and the count of valid data values
+            var sum = 0;
+            var count = 0;
 
-                    // Initialize the sum of the values
-                    var sum = 0;
+            // Iterate over the date range and sum the values for each date
+            dateRange.forEach(function(date) {
+                var dateString = formatTime(date);
+                console.log(dateString);
+                var dataValue = parseFloat(data[i][dateString]);
+                if (!isNaN(dataValue)) {
+                    sum += dataValue;
+                    count++;
+                }
+            
+                // For each feature in the GeoJSON data
+                for (var j = 0; j < geojson.features.length; j++) {
+                    var jsonCountry = geojson.features[j].properties.name; // Get the country name
+                    // If the country names match
+                    if (dataCountry == jsonCountry) {
+                        // Set the value of the GeoJSON feature
+                        geojson.features[j].properties.refugees = Math.round(sum / count);
+                        break;
+                    }
+                }
+            });
+        }
 
-                    // Iterate over the date range and sum the values for each date
-                    dateRange.forEach(function(date) {
-                        var dateString = formatTime(date);
-                        console.log(dateString);
-                        var dataValue = parseFloat(data[i][dateString]);
-                        if (!isNaN(dataValue)) {
-                            sum += dataValue;
-                        }
-                    
-
-                        // For each feature in the GeoJSON data
-                        for (var j = 0; j < geojson.features.length; j++) {
-                            var jsonCountry = geojson.features[j].properties.name; // Get the country name
-                            // If the country names match
-                            if (dataCountry == jsonCountry) {
-                                // Set the value of the GeoJSON feature
-                                geojson.features[j].properties.refugees = sum;
-                                break;
-                            }
-                        }
-                    });
+        // Tell D3 to render a path for each GeoJSON feature
+        svg.selectAll("path")
+            .data(geojson.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("class", "country")
+            .style("fill", function(d) { // Set the fill color of the path
+                if (d.properties.name === 'Ukraine') {
+                    // Create a linear gradient for Ukraine
+                    var gradient = svg.append("defs")
+                        .append("linearGradient")
+                        .attr("id", "gradient")
+                        .attr("x1", "0%")
+                        .attr("y1", "0%")
+                        .attr("x2", "0%")
+                        .attr("y2", "100%");
+        
+                    gradient.append("stop")
+                        .attr("offset", "50%")
+                        .attr("stop-color", "#0057B7");
+        
+                    gradient.append("stop")
+                        .attr("offset", "50%")
+                        .attr("stop-color", "#FFDD00");
+        
+                    return "url(#gradient)";
                 }
 
-                // Tell D3 to render a path for each GeoJSON feature
-                svg.selectAll("path")
-                    .data(geojson.features)
-                    .enter()
-                    .append("path")
-                    .attr("d", path)
-                    .attr("class", "country")
-                    .style("fill", function(d) { // Set the fill color of the path
-                        if (d.properties.name === 'Ukraine') {
-                            // Create a linear gradient for Ukraine
-                            var gradient = svg.append("defs")
-                                .append("linearGradient")
-                                .attr("id", "gradient")
-                                .attr("x1", "0%")
-                                .attr("y1", "0%")
-                                .attr("x2", "0%")
-                                .attr("y2", "100%");
+                var value = d.properties.refugees; // Get the value of the feature
                 
-                            gradient.append("stop")
-                                .attr("offset", "50%")
-                                .attr("stop-color", "#0057B7");
-                
-                            gradient.append("stop")
-                                .attr("offset", "50%")
-                                .attr("stop-color", "#FFDD00");
-                
-                            return "url(#gradient)";
-                        }
-
-                        var value = d.properties.refugees; // Get the value of the feature
-                        
-                        if (value) {
-                            return color(value); // If the value exists, return the corresponding color
-                        } else {
-                            return "#ccc"; // If the value doesn't exist, return a default color
-                        }
-                    })
-                    // Mouseover event listener to highlight bars
-                    .on("mouseover", function(event, d){
-                        d3.select(this)
-                            .style("stroke", "#001141") // Set the stroke color to black
-                            .style("stroke-width", "1.5"); // Set the stroke width to 1
-                    })
-                    .on("mouseout", function(event, d){
-                        d3.select(this)
-                            .style("stroke", "none"); // Remove the stroke on mouseout
-                    })
-                    // Add a title for each bar for accessibility
-                    .append("title")
-                    .text(function(d){
-                        return d.properties.name+": " + d.properties.refugees;
-                    });
+                if (value) {
+                    return color(value); // If the value exists, return the corresponding color
+                } else {
+                    return "#ccc"; // If the value doesn't exist, return a default color
+                }
+            })
+            // Mouseover event listener to highlight bars
+            .on("mouseover", function(event, d){
+                d3.select(this)
+                    .style("stroke", "#001141") // Set the stroke color to black
+                    .style("stroke-width", "1.5"); // Set the stroke width to 1
+            })
+            .on("mouseout", function(event, d){
+                d3.select(this)
+                    .style("stroke", "none"); // Remove the stroke on mouseout
+            })
+            .on("click", function(event, d) {
+                // Redirect the user to a new page
+                window.open("http://127.0.0.1:5500/Project/country?name=" + encodeURIComponent(d.properties.name), '_blank');
+            })
+            // Add a title for each bar for accessibility
+            .append("title")
+            .text(function(d){
+                return d.properties.name+": " + d.properties.refugees;
             });
-        });
     }
         
     d3.csv("map.csv").then(function(data) {
@@ -157,7 +168,7 @@ function init() {
                 var selectedStartDate = d3.timeFormat('%Y-%m')(value[0]);
                 var selectedEndDate = d3.timeFormat('%Y-%m')(value[1]);
                 // Update the map with the new date range
-                updateMap(selectedStartDate, selectedEndDate);
+                updateMap(selectedStartDate, selectedEndDate, csvData, geojsonData);
             });
 
         var gStep = d3.select('#chart')
@@ -169,9 +180,6 @@ function init() {
 
         gStep.call(slider);
     });
-
-    // Call updateMap with '2022-03' to '2022-07' for initial display
-    updateMap("2022-03", "2022-07");
 
     // set legend
     svg.append("g")
