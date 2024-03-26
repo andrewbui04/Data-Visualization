@@ -103,7 +103,8 @@
     font-weight: bold;
 }
 
-#chart {
+#chart,
+.lineChart {
     overflow: hidden;    
 }
 
@@ -134,4 +135,21 @@
 .sliderLabel {
     width: 10%;
     margin: 0 2%;
+}
+
+.homepage {
+    display: inline-block;
+    padding: 10px 24px;
+    text-decoration: none;
+    color: white;
+    background-color: dodgerblue;
+    border: 2px solid dodgerblue;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+
+}
+
+.homepage:hover {
+    background-color: goldenrod;
+    color: black;
 }

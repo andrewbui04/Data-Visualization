@@ -133,7 +133,7 @@ function init() {
             })
             .on("click", function(event, d) {
                 // Redirect the user to a new page
-                window.open("http://127.0.0.1:5500/Project/country?name=" + encodeURIComponent(d.properties.name), '_blank');
+                window.open("https://mercury.swin.edu.au/cos30045/s104177995/Project/lineChart.html?name=" + encodeURIComponent(d.properties.name), '_blank');
             })
             // Add a title for each bar for accessibility
             .append("title")
