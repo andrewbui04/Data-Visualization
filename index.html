@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Project" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="Huy Vu Tran, Thai Anh Bui" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo@"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-geo-projection@4"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <title>Data Visualisation Project</title>
+</head>
+<body>
+    <div>
+        <div class="section1">
+            <div class="left-side">
+                <div class="on-24-february-2022">
+                    On 24 February,<br />
+                    2022 
+                </div>
+                <span class="russia_text">Russia invaded Ukraine in an escalation of the Russo-Ukrainian War that started in 2014. The invasion became the largest attack on a European country since World War II.
+                </span>
+            </div>
+            <div class="right-side">
+                <img src="ukraine.jpg" alt="Ukraine" />
+            </div>
+        </div>
+        <div class="section2">
+            <div class="group1">
+                <div class="text1-1">
+                    10K+
+                </div>
+                <span class="text2-1">
+                    Ukrainian civilian casualties
+                </span>
+            </div>
+            <div class="group2">
+                <div class="text1-2">
+                    400K+
+                </div>
+                <span class="text2-2">
+                    Military casualties
+                </span>
+            </div>
+            <div class="group3">
+                <div class="text1-3">
+                    ~20%
+                </div>
+                <span class="text2-3">
+                    Ukrainian's territory has been taken
+                </span>
+            </div>
+            <div class="group4">
+                <div class="text1-4">
+                    6M+
+                </div>
+                <span class="text2-4">
+                    Ukrainian refugees fled across Europe
+                </span>
+            </div>
+        </div>
+        <div class="section3">
+            <p id="title">Number of Ukrainian refugees fleeing to European Union countries</p>
+            <p id="chart"></p>
+            <div id="slider-step"></div>
+        </div>
+    </div>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+</html>

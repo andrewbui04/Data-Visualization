@@ -1,0 +1,155 @@
+.section1 {
+    display: flex;
+    box-sizing: border-box;
+}
+
+.left-side {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    box-sizing: border-box;
+    margin: 5%;
+}
+
+.right-side {
+    width: 60%;
+}
+
+.right-side img{
+    width: 100%;
+    margin: 7% 0;
+    border-radius: 5%;
+    border: 1px solid black;
+}
+
+.on-24-february-2022 {
+    display: inline-block;
+    overflow-wrap: break-word;
+    font-weight: 500;
+    font-size: 70px;
+    letter-spacing: -2px;
+    line-height: 1.5;
+    color: #000000;
+    font-family: 'Space Grotesk', sans-serif;
+    margin-bottom: 10%;
+}
+
+.russia_text {
+    align-self: flex-start;
+    text-align: justify;
+    overflow-wrap: break-word;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 2;
+    color: #000000;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.section2 {
+    margin: 5% 0 20% 0;
+    background: #FFCB66;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 41px 119.5px 14px 149.1px;
+    box-sizing: border-box;
+}
+
+.group1,
+.group2,
+.group3,
+.group4 {
+    margin: 1% 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.text1-1,
+.text1-2,
+.text1-3,
+.text1-4 {
+    margin-bottom: 11px;
+    display: inline-block;
+    overflow-wrap: break-word;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    font-size: 50px;
+    color: #000000;
+}
+
+.text2-1,
+.text2-2,
+.text2-3,
+.text2-4 {
+    text-align: center;
+    overflow-wrap: break-word;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #060312;
+}
+
+.section3 {
+    margin-top: -15%;    
+}
+
+#title {
+    text-align: center;
+    margin: 2% 0 0 0;
+    padding: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+#chart,
+.lineChart {
+    overflow: hidden;    
+}
+
+.slider:hover {
+    cursor: pointer;
+}
+
+.handle {
+    fill: #0057B7;
+}
+
+#sliderContainer {
+    width: 50%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#sliderContainer input {
+    width: 100%;
+}
+
+#sliderContainer input:hover {
+    cursor: pointer;
+}
+
+.sliderLabel {
+    width: 10%;
+    margin: 0 2%;
+}
+
+.homepage {
+    display: inline-block;
+    padding: 10px 24px;
+    text-decoration: none;
+    color: white;
+    background-color: dodgerblue;
+    border: 2px solid dodgerblue;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+
+}
+
+.homepage:hover {
+    background-color: goldenrod;
+    color: black;
+}
