@@ -132,7 +132,7 @@ function init() {
                     .style("stroke", "none"); // Remove the stroke on mouseout
             })
             .on("click", function(event, d) {
-                // Redirect the user to a new page
+                // Redirect the user to a new page s104177995
                 window.open("https://mercury.swin.edu.au/cos30045/s104177995/Project/lineChart.html?name=" + encodeURIComponent(d.properties.name), '_blank');
             })
             // Add a title for each bar for accessibility
