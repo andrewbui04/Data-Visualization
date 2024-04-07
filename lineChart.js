@@ -30,28 +30,27 @@ function init() {
         });
 
        
-   // Find the index of the country in the countriesData array
-   var countryIndex = countriesData.findIndex(function(d) {
-    return d.country === countryName;
-});
+        // Find the index of the country in the countriesData array
+        var countryIndex = countriesData.findIndex(function(d) {
+            return d.country === countryName;
+    });
 
-// Check if the countryIndex is valid
-if (countryIndex !== -1) {
-    // Call the lineChart function with the data for the selected country
-    lineChart(countriesData[countryIndex]);
-} else {
-    console.error("Country not found: " + countryName);
-}
+    // Check if the countryIndex is valid
+    if (countryIndex !== -1) {
+        // Call the lineChart function with the data for the selected country
+        lineChart(countriesData[countryIndex]);
+    } else {
+        console.error("Country is invalid: " + countryName);
+    }
         
     });
 
     // Function to parse month and year strings into JavaScript Date objects
     function parseMonthYear(monthYearString) {
-        // Extract year and month from the column name (e.g., "2022-03")
+        // Extract year and month from the column name -> Finally, return JavaScript Date object
         var yearMonth = monthYearString.split("-");
         var year = +yearMonth[0]; // Convert year to number
         var month = +yearMonth[1] - 1; // Convert month to number and subtract 1 for zero-based index
-        // Return JavaScript Date object
         return new Date(year, month);
     }
 
@@ -69,7 +68,7 @@ if (countryIndex !== -1) {
         // Define scales
         var xScale = d3.scaleTime()
             .domain([parseMonthYear("2022-03"), parseMonthYear("2024-01")]) // March 2022 to January 2024
-            .range([padding, w - padding + 10]);
+            .range([padding, w - padding + 12]);
     
         var yScale = d3.scaleLinear()
             .domain([0, d3.max(countryData.data, function(d) { return d.value; })])
@@ -90,12 +89,14 @@ if (countryIndex !== -1) {
         svg.append("g")
             .attr("class", "x-axis")
             .attr("transform", "translate(0," + (h - padding) + ")")
+            .style("font-size", "13px")
             .call(xAxis);
     
         // Draw y-axis
         svg.append("g")
             .attr("class", "y-axis")
             .attr("transform", "translate(" + padding + ",0)")
+            .style("font-size", "16px")
             .call(yAxis);
     
         // Draw line
@@ -133,7 +134,7 @@ if (countryIndex !== -1) {
         .style("border-radius", "5px")
         .style("pointer-events", "none")
         .style("font-weight", "bold")
-        .style("right", "16rem")
+        .style("right", "14rem")
         .style("top", "110px"); 
         // Add dots
         svg.selectAll(".dot")
@@ -142,17 +143,19 @@ if (countryIndex !== -1) {
         .attr("class", "dot")
         .attr("cx", function(d) { return xScale(d.monthYear); })
         .attr("cy", function(d) { return yScale(d.value); })
-        .attr("r", 4)
+        .attr("r", 5)
         .attr("fill", "#0057B7")
         .attr("cursor", "pointer")
         .on("mouseover", function(events, d) {
             var ukrainianRefugee = d.value;
             var monthYear = d3.timeFormat("%b %Y")(d.monthYear); 
             tooltip.style("visibility", "visible")
+                .style("font-size", "18px")
                 .html("Total refugees: " + ukrainianRefugee.toLocaleString() + " (" + monthYear + ")");
         })
         .on("mouseout", function(d) {
-            tooltip.style("visibility", "hidden");
+            tooltip.style("visibility", "hidden")
+                    .style("font-size", "14px");
         });
 
         // Add title
